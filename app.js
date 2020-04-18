@@ -51,3 +51,5 @@ app.use("/insert/", insertRouter);
 app.use("/remove/", removeRouter);
 
 connect();
+
+module.exports = app;
