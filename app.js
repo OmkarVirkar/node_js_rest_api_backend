@@ -1,4 +1,5 @@
 const express = require("express");
+var session = require("express-session");
 const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -8,11 +9,20 @@ var cookieParser = require("cookie-parser");
 require("dotenv").config();
 var cors = require("cors");
 
-app.use(cors());
-app.use(express.json());
+// Use express session
+app.use(
+  session({
+    resave: true,
+    saveUninitialized: true,
+    secret: "SOMERANDOMSECRETHERE",
+    cookie: { maxAge: 60000 },
+  })
+);
 
 // Middlewares
 // app.use(require("connect").bodyParser());
+app.use(cors());
+app.use(express.json());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,6 +34,7 @@ var findRoutes = require("./routes/find/find");
 var updateRouter = require("./routes/update/update");
 var insertRouter = require("./routes/insert/insert");
 var removeRouter = require("./routes/remove/remove");
+var signInRouter = require("./routes/signin/signIn");
 
 let connect = () => {
   mongoose.connection
@@ -45,6 +56,7 @@ let listen = () => {
 };
 
 app.use("/", indexRoutes);
+app.use("/signIn/", signInRouter);
 app.use("/find", findRoutes);
 app.use("/update/", updateRouter);
 app.use("/insert/", insertRouter);
